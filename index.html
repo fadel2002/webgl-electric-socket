@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebGL</title>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      canvas {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body onload="main()">
+    <canvas id="canvas"></canvas>
+    <script id="vertexShaderCode" type="notjs">
+      attribute vec4 a_position;
+      attribute vec3 a_normal;
+
+      uniform mat4 u_projection;
+      uniform mat4 u_view;
+      uniform mat4 u_world;
+
+      varying vec3 v_normal;
+
+      void main() {
+        gl_Position = u_projection * u_view * u_world * a_position;
+        v_normal = mat3(u_world) * a_normal;
+      }
+    </script>
+    <script id="fragmentShaderCode" type="notjs">
+      precision mediump float;
+
+      varying vec3 v_normal;
+
+      uniform vec4 u_diffuse;
+      uniform vec3 u_lightDirection;
+
+      void main () {
+        vec3 normal = normalize(v_normal);
+        float fakeLight = dot(u_lightDirection, normal) * .5 + .5;
+        gl_FragColor = vec4(u_diffuse.rgb * fakeLight, u_diffuse.a);
+      }
+    </script>
+    <script src="main.js"></script>
+    <script src="util/util.js"></script>
+    <script src="util/webgl-utils.js"></script>
+    <script src="util/m4.js"></script>
+  </body>
+</html>
